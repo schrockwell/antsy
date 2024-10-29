@@ -170,6 +170,10 @@ defmodule Antsy do
   ]
 
   for {name, char} <- @cursor_movements do
+    defp decode_next(<<unquote(char), rest::binary>>, {:esc, "\e["}, results) do
+      decode_next(rest, {:text, ""}, [{unquote(name), [1]} | results])
+    end
+
     defp decode_next(<<unquote(char), rest::binary>>, {:esc, "\e[" <> arg}, results) do
       token =
         case Integer.parse(arg) do

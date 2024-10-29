@@ -45,6 +45,11 @@ defmodule AntsyTest do
     assert_decode(:cursor_down, [1])
     assert_decode(:cursor_left, [1])
     assert_decode(:cursor_right, [1])
+
+    assert_decode("\e[A", :cursor_up, [1])
+    assert_decode("\e[B", :cursor_down, [1])
+    assert_decode("\e[C", :cursor_right, [1])
+    assert_decode("\e[D", :cursor_left, [1])
   end
 
   test "decodes basic modes" do
@@ -104,6 +109,10 @@ defmodule AntsyTest do
 
   defp assert_decode(name, args) do
     string = apply(IO.ANSI, name, args)
+    assert Antsy.decode(string) == {[{name, args}], ""}
+  end
+
+  defp assert_decode(string, name, args) do
     assert Antsy.decode(string) == {[{name, args}], ""}
   end
 end
