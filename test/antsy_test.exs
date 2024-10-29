@@ -87,6 +87,16 @@ defmodule AntsyTest do
     assert_decode(:color_background, [123])
   end
 
+  test "decodes an array of individual character strings" do
+    chars = ["\e", "[", "H"]
+
+    assert {[:home], ""} =
+             Enum.reduce(chars, {[], ""}, fn char, {acc, remainder} ->
+               {new_data, new_remainder} = Antsy.decode(remainder <> char)
+               {acc ++ new_data, new_remainder}
+             end)
+  end
+
   defp assert_decode(name) do
     string = apply(IO.ANSI, name, [])
     assert Antsy.decode(string) == {[name], ""}
