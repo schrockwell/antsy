@@ -99,6 +99,8 @@ defmodule Antsy do
   @doc """
   Extracts ANSI escape sequences from a string.
 
+  A list of strings (not an iolist!) may also be decoded.
+
   Returns a tuple containing a list of decoded data, and a string of any remaining data that could not be completely
   decoded. When decoding a stream of data (e.g. from TCP or stdin), the caller should keep track of the remainder and
   prepend it to the next chunk of data for further decoding.
@@ -119,9 +121,19 @@ defmodule Antsy do
       iex> Antsy.decode("Hello, \\e[1mworld!\\e[0m")
       {["Hello, ", :bright, "world!", :reset], ""}
   """
-  @spec decode(String.t()) :: {list(ansidata), String.t()}
+  @spec decode(String.t() | [String.t()]) :: {list(ansidata), String.t()}
   def decode(string) when is_binary(string) do
     decode_next(string, {:text, ""}, [])
+  end
+
+  def decode(list) when is_list(list) do
+    {acc, remainder} =
+      Enum.reduce(list, {[], ""}, fn char, {acc, remainder} ->
+        {new_data, new_remainder} = Antsy.decode(remainder <> char)
+        {[acc, new_data], new_remainder}
+      end)
+
+    {List.flatten(acc), remainder}
   end
 
   # Accumulate text on text

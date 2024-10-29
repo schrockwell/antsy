@@ -95,11 +95,7 @@ defmodule AntsyTest do
   test "decodes an array of individual character strings" do
     chars = ["\e", "[", "H"]
 
-    assert {[:home], ""} =
-             Enum.reduce(chars, {[], ""}, fn char, {acc, remainder} ->
-               {new_data, new_remainder} = Antsy.decode(remainder <> char)
-               {acc ++ new_data, new_remainder}
-             end)
+    assert {[:home], ""} = Antsy.decode(chars)
   end
 
   defp assert_decode(name) do
