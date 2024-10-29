@@ -4,13 +4,16 @@ defmodule Antsy.MixProject do
   def project do
     [
       app: :antsy,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: "Decodes ANSI escape sequences",
       package: package(),
-      source_url: "https://github.com/schrockwell/antsy"
+      source_url: "https://github.com/schrockwell/antsy",
+      docs: [
+        main: "Antsy"
+      ]
     ]
   end
 
